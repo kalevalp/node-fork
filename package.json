@@ -1,0 +1,21 @@
+{
+  "name": "fork",
+  "version": "1.0.0",
+  "description": "",
+  "main": "fork.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "node-gyp rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kalevalp/node-fork.git"
+  },
+  "author": "Kalev Alpernas <kalev.alp@gmail.com>",
+  "license": "ISC",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/kalevalp/node-fork/issues"
+  },
+  "homepage": "https://github.com/kalevalp/node-fork#readme"
+}
