@@ -1,9 +1,9 @@
 const fork = require('./build/Release/fork');
 
 
-module.export.fork = function() {
+module.exports.fork = function() {
     pid = fork.fork();
 
-    return fork == 0;
+    return pid == 0;
 }
 
