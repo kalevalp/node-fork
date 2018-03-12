@@ -2,6 +2,7 @@
 #include <node.h>
 #include <unistd.h>
 #include <string> 
+#include <sys/wait.h>
 
 namespace nodefork {
   
@@ -12,7 +13,7 @@ namespace nodefork {
   using v8::Number;
   using v8::Value;
   
-  void Method(const FunctionCallbackInfo<Value>& args) {
+  void Fork(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = args.GetIsolate();
     
     pid_t pid = fork();
@@ -23,8 +24,15 @@ namespace nodefork {
     
   }
   
+  void Wait(const FunctionCallbackInfo<Value>& args) {
+    int status;
+
+    wait(&status);
+  }
+  
   void init(Local<Object> exports) {
-    NODE_SET_METHOD(exports, "fork", Method);
+    NODE_SET_METHOD(exports, "fork", Fork);
+    NODE_SET_METHOD(exports, "wait", Wait);
   }
   
   NODE_MODULE(hello_world, init)
