@@ -1,9 +1,12 @@
 // hello.cc
 #include <node.h>
 #include <unistd.h>
-#include <string.h> 
+#include <string.h>
+#include <sstream>
 #include <sys/wait.h>
 #include <iostream>
+
+__asm__(".symver string,string@GLIBC_2.17");
 
 namespace nodefork {
   
@@ -65,14 +68,70 @@ namespace nodefork {
     
     int pipe = args[0]->NumberValue();
 
-    char buf;
-    std::string str;
+    char buf[100];
+    
+    char* res;
+    char* tmpstr;
 
-    while (read(pipe, &buf, 1) > 0) {
-      str += buf;
+    int iter = 0;
+    
+    while (true) {
+      int rcount = read(pipe, buf, 100);
+      iter++;
+      
+      if (rcount > 0) {
+        if (rcount < 100) {
+          buf[rcount] = '\0';
+        }
+        
+        if (iter == 1) {
+          res = (char*) malloc(sizeof(char)*100*iter);
+          *res = '\0';
+        } else {
+          tmpstr = res;
+          res = (char*) malloc(sizeof(char)*100*iter);     
+          strcpy(res,tmpstr);    
+          free(tmpstr);
+        }
+        strcat(res, buf);
+        
+      } else break;
+      
+
+
+
+      // std::cout << res;
+      // std::cout << buf;
     }
+    
+    // // std::string str = "";
+    // std::ostringstream os;
+    // // os << "dec: " << 15 << " hex: " << std::hex << 15 << endl;
+    
+    // // str.push_back(buf);
 
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate,str.c_str()));//buf));
+    // // while (true) {
+    // //   int read_no = read(pipe, &buf, 1);
+    // //   if (read_no > 0) {
+    // //     str = str + buf;
+    // //   } else {
+    // //     break;
+    // //   }
+    // // }
+
+    // while (read(pipe, &buf, 1) > 0) {
+    //   // if (buf) {
+    //   //str = str + buf;
+    //   // } else {
+    //   //   buf = 'a';
+    //   // }
+    //   // str.push_back(buf);
+
+    //   // str.append(&buf);
+    //   os << buf;
+    // }
+
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate,res));//os.str().c_str()));//str.c_str()));//buf));
   }
 
   void Close(const FunctionCallbackInfo<Value>& args) { 
